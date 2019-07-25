@@ -1,0 +1,16 @@
+SRCDIR = ./doc
+
+SOURCES    = $(wildcard $(SRCDIR)/*.jax)
+
+.PHONY: install
+install:
+	npm install
+
+.PHONY: lint
+lint:
+	npx textlint -f stylish $(SOURCES)
+
+.PHONY: fix
+fix:
+	npx textlint --fix -f stylish $(SOURCES)
+
