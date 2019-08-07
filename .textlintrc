@@ -1,16 +1,23 @@
 {
+  "plugins" : {
+    "@textlint/textlint-plugin-text" : {
+      "extensions": [".jax"]
+    }
+  },
   "rules": {
-    "spellcheck-tech-word": true,
+    "spellcheck-tech-word": false,
     "preset-ja-technical-writing": {
       "max-ten": {
         "max": 3
       },
-      "no-mix-dearu-desumasu": true,
+      "ja-no-mixed-period": false,
+      "no-exclamation-question-mark": false,
+      "no-mix-dearu-desumasu": false,
       "ja-no-abusage": true,
       "ja-no-redundant-expression": true,
-      "no-unmatched-pair": true,
       "no-double-negative-ja": true,
       "no-doubled-conjunctive-particle-ga": true,
+      "no-nfd": true,
     }
   }
 }
