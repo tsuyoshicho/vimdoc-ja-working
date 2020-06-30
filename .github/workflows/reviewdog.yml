@@ -1,0 +1,21 @@
+name: reviewdog
+on: [push, pull_request]
+jobs:
+  nvcheck:
+    name: runner / nvcheck
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code.
+        uses: actions/checkout@v2
+      - name: nvcheck
+        uses: ./.github/actions/vimhelp-nvcheck/
+        if: github.event_name != 'pull_request'
+        with:
+          github_token: ${{ secrets.github_token }}
+          reporter: github-check
+      - name: nvcheck pr-review
+        uses: ./.github/actions/vimhelp-nvcheck/
+        if: github.event_name == 'pull_request'
+        with:
+          github_token: ${{ secrets.github_token }}
+          reporter: github-pr-review
