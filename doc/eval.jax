@@ -1521,7 +1521,7 @@ Note Exコマンドを実行するためにどのように execute() を使っ�
 	:    unlet s:[k]
 	:endfor
 
-Note: Vim9 script では差がある、|vim9-scopes| を参照。
+Note: Vim9 script ではこれとは違いがある、|vim9-scopes| を参照。
 
 						*buffer-variable* *b:var* *b:*
 "b:" で始まる変数名は、カレントバッファに局所的な変数を意味する。このように一
@@ -1709,13 +1709,11 @@ v:cmdbang	v:cmdargと同じく読み書きコマンドを実行したとき設�
 		0となる。Note 自動コマンドの中でのみ利用可能なことに注意。
 		ユーザー定義コマンドでは|<bang>|を使えば同じことができる。
 						*v:collate* *collate-variable*
-v:collate	The current locale setting for collation order of the runtime
-		environment.  This allows Vim scripts to be aware of the
-		current locale encoding.  Technical: it's the value of
-		LC_COLLATE.  When not using a locale the value is "C".
-		This variable can not be set directly, use the |:language|
-		command.
-		See |multi-lang|.
+v:collate	現在のロケール設定での実行環境の照合順序。これは Vim script が
+		現在のロケールのエンコーディングを検知するのを許可する。技術的
+		説明: ロケールの値で "C" を使ってない場合、LC_COLLATE の値。こ
+		の変数は直接は設定出来なく、|:language| コマンドを使う。
+		|multi-lang| を参照。
 
 				*v:completed_item* *completed_item-variable*
 v:completed_item
@@ -1952,6 +1950,8 @@ v:mouse_col	|getchar()|でマウスクリックイベントが発生したとき
 					*v:none* *none-variable* *None*
 v:none		空の文字列。JSONでは空の要素として使われる。
 		|json_encode()|を参照。
+		これは関数の引数のデフォルト値に使うこともできる、
+		|none-function_argument| を参照。
 		数値として使われた時、これは 0 として評価される。
 		文字列として使われた時、これは "v:none" として評価される。 >
 			echo v:none
@@ -2163,6 +2163,8 @@ v:termresponse	termcapのエントリ|t_RV|で端末から返されるエスケ�
 		け取ったとき代入される。このオプションがセットされると自動コマ
 		ンドイベントTermResponseが発生し、端末からの応答に反応すること
 		ができる。
+		|terminalprops()| を使うことで Vim が端末がどのようであるかを知
+		ることができる。
 		新しいxtermからの応答は次の形式である:
 		 "<Esc>[> Pp ; Pv ; Pc c"。ここでPpは端末のタイプ: 0ならvt100、
 		 1ならvt220。Pvはパッチレベル(パッチ95で導入されたため常に95以
@@ -2428,6 +2430,8 @@ finddir({name} [, {path} [, {count}]])
 				文字列	{path}からディレクトリ{name}を探す
 findfile({name} [, {path} [, {count}]])
 				文字列	{path}からファイル{name}を探す
+flatten({list} [, {maxdepth}])	リスト	リスト {list} を {maxdepth} の深さまで
+					平坦化する
 float2nr({expr})		数値	浮動小数点数 {expr} を数値に変換する
 floor({expr})			浮動小数点数	{expr} を切り捨てる
 fmod({expr1}, {expr2})		浮動小数点数	{expr1} / {expr2} の余り
@@ -2477,15 +2481,18 @@ getjumplist([{winnr} [, {tabnr}]])
 				リスト	ジャンプリスト要素のリスト
 getline({lnum})			文字列	現在のバッファから行の内容を取得
 getline({lnum}, {end})		リスト	カレントバッファの{lnum}から{end}行目
-getloclist({nr} [, {what}])	リスト	locationリストの要素のリスト
+getloclist({nr})		リスト	locationリストの要素のリスト
+getloclist({nr}, {what})	辞書	指定したlocationリストのプロパティ
 getmarklist([{expr}])		リスト	グローバル/ローカルのマークのリスト
 getmatches([{win}])		リスト	現在のマッチのリスト
 getmousepos()			辞書	マウスの最新の位置
 getpid()			数値	Vim のプロセス ID
 getpos({expr})			リスト	カーソル・マークなどの位置を取得
-getqflist([{what}])		リスト	quickfix要素のリスト
+getqflist()			リスト	quickfixリストの要素のリスト
+getqflist({what})		辞書	指定したquickfixリストのプロパティ
 getreg([{regname} [, 1 [, {list}]]])
 				文字列/リスト   レジスタの中身を取得
+getreginfo([{regname}])		辞書	レジスタについての情報
 getregtype([{regname}])		文字列	レジスタの種類を取得
 gettabinfo([{expr}])		リスト	タブページのリスト
 gettabvar({nr}, {varname} [, {def}])
@@ -2678,9 +2685,11 @@ pyxeval({expr})			任意	|python_x| の式を評価する
 rand([{expr}])			数値	疑似乱数を取得する
 range({expr} [, {max} [, {stride}]])
 				リスト	{expr}から{max}までの要素のリスト
-readdir({dir} [, {expr}])	リスト	{expr}によって選択された{dir}内のファ
+readdir({dir} [, {expr} [, {dict}]])
+				リスト	{expr}によって選択された{dir}内のファ
 					イル名を取得
-readdirex({dir} [, {expr}])	リスト	{expr}によって選択された{dir}内のファ
+readdirex({dir} [, {expr} [, {dict}]])
+				リスト	{expr}によって選択された{dir}内のファ
 					イル情報を取得
 readfile({fname} [, {type} [, {max}]])
 				リスト	ファイル{fname}から行のリストを取得
@@ -2720,7 +2729,7 @@ screencol()			数値	現在のカーソル列
 screenpos({winid}, {lnum}, {col}) 辞書	スクリーン行と列のテキスト
 screenrow()			数値	現在のカーソル行
 screenstring({row}, {col})	文字列	スクリーン位置の文字列
-search({pattern} [, {flags} [, {stopline} [, {timeout}]]])
+search({pattern} [, {flags} [, {stopline} [, {timeout} [, {skip}]]]])
 				数値	{pattern} を検索する
 searchcount([{options}])	辞書	検索の統計の取得もしくは更新する
 searchdecl({name} [, {global} [, {thisblock}]])
@@ -2729,7 +2738,7 @@ searchpair({start}, {middle}, {end} [, {flags} [, {skip} [...]]])
 				数値	開始/終端のペアの他方を検索
 searchpairpos({start}, {middle}, {end} [, {flags} [, {skip} [...]]])
 				リスト	開始/終端のペアの他方を検索
-searchpos({pattern} [, {flags} [, {stopline} [, {timeout}]]])
+searchpos({pattern} [, {flags} [, {stopline} [, {timeout} [, {skip}]]]])
 				リスト	{pattern}を検索
 server2client({clientid}, {string})
 				数値	返信文字列を送信する
@@ -2745,12 +2754,17 @@ setenv({name}, {val})		なし	環境変数を設定
 setfperm({fname}, {mode})	数値	ファイル {fname} のパーミッションを
 					{mode} に設定
 setline({lnum}, {line})		数値	行{lnum}に{line}(文字列)をセット
-setloclist({nr}, {list} [, {action} [, {what}]])
+setloclist({nr}, {list} [, {action}])
 				数値	{list}を使ってlocationリストを変更
+setloclist({nr}, {list}, {action}, {what})
+				数値	指定したlocationリストのプロパティを
+					変更
 setmatches({list} [, {win}])	数値	マッチのリストを復元する
 setpos({expr}, {list})		なし	{expr}の位置を{list}にする
-setqflist({list} [, {action} [, {what}]])
-				数値	{list}を使ってquickfixリストを変更
+setqflist({list} [, {action}])	数値	{list}を使ってquickfixリストを変更
+setqflist({list}, {action}, {what})
+				数値	指定したquickfixリストのプロパティを
+					変更
 setreg({n}, {v} [, {opt}])	数値	レジスタの値とタイプを設定
 settabvar({nr}, {varname}, {val}) なし	タブページ{nr}の変数{varname}を{val}に
 					設定する
