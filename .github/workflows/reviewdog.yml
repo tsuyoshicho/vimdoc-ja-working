@@ -17,5 +17,5 @@ jobs:
         uses: ./.github/actions/vimhelp-nvcheck/
         if: github.event_name == 'pull_request'
         with:
-          github_token: ${{ secrets.github_token }}
+          github_token: ${{ secrets.ACCESS_TOKEN }}
           reporter: github-pr-review
