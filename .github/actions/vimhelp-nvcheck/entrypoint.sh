@@ -16,7 +16,7 @@ find doc -name \*.jax -print0 | xargs -0 nvcheck        \
 # github-pr-review only diff adding
 if [ "${INPUT_REPORTER}" = "github-pr-review" ]; then
   # fix
-  find doc -name \*.jax -print0 | xargs -0 nvcheck --fix
+  find doc -name \*.jax -print0 | xargs -0 nvcheck -i
 
   TMPFILE=$(mktemp)
   git diff >"${TMPFILE}"
