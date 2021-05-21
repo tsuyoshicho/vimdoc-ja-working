@@ -13,7 +13,7 @@ jobs:
         uses: ./.github/actions/vimhelp-nvcheck/
         with:
           github_token: ${{ secrets.github_token }}
-          reporter: github-pr-check
+          reporter: github-pr-review
 
       # on: [push, pull_request]
       # - name: nvcheck-github-check
